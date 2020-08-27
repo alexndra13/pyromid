@@ -1,6 +1,26 @@
+# Erases and creates the game database with all the necessary tables and fields
+#
+# The table are:
+#    user: name, password
+#    game: players, goal, state, ts, turns
+#       One line for each game.
+#       players = max number of players in the game
+#       goal = score (or number of rounds)
+#       state = 0=adding players, 1=game in progress, 2=game over
+#       ts = timestamp of last player added to game
+#       turns =
+#
+#    player: game_id, user_name, score, playing, paddles
+#       One line for each player in each game.
+#       game_id = unique game number for all players in game
+#       user_name = user name
+#       score = player's score
+#       playing = 0=left game, 1=in game
+#       paddles = text representation of which paddles are left to play (e.g. "12_4_67")
+#
 import sqlite3
 
-connection = sqlite3.connect('game.db')
+connection = sqlite3.connect('pyro_game.db')
 
 connection.execute('DROP TABLE IF EXISTS user')
 connection.execute('DROP TABLE IF EXISTS game')

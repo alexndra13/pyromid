@@ -1,4 +1,7 @@
-"""All sqlite3 dependencies.
+"""
+This module has all of the database read and write routines.
+
+All sqlite3 dependencies.
 
 All sqlite3 dependent code is collected in this module. The rest of the game app will be isolated from direct
 interaction with sqlite3. This makes it easy to replace sqlite3 with a different database. Only the code in this
@@ -12,7 +15,7 @@ import json
 class DB:
     """Miscellaneous functions for checking username & password, fetching games, updating scores etc."""
     def __init__(self):
-        self.connection = sqlite3.connect('game.db')
+        self.connection = sqlite3.connect('pyro_game.db')
 
     def user_pass_valid(self, username, password):
         cursor = self.connection.cursor()

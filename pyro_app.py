@@ -6,8 +6,8 @@ Uses classes DB and Pyramid to build a pyramid game.
 import wsgiref.simple_server
 import urllib.parse
 import http.cookies
-from db_sqlite import DB
-from pyramid import Pyramid
+from pyro_db_sqlite import DB
+from pyro_pyramid import Pyramid
 
 
 def application(e, start_response):
