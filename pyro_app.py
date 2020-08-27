@@ -39,7 +39,7 @@ def application(e, start_response):
 </style>
 </head>
 <body>
-<h1>Piramid</h1>'''
+<h1>Pyromid</h1>'''
 
     # ----- For logging in and registering ---------------------------
 
@@ -367,7 +367,6 @@ def application(e, start_response):
 
         start_response('200 OK', headers)
         return [page.encode()]
-
     # ----- Clear tables --------------------------------------
 
     elif path_info == '/clear_games':

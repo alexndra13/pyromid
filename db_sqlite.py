@@ -74,7 +74,7 @@ class DB:
             return
 
         max_players, goal, state, ts, turns = game
-        if state > 0:
+        if state > 1:
             print("Game full")
             return
 

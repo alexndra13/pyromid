@@ -29,6 +29,7 @@ CREATE TABLE player (
  user_name VARCHAR(64),
  score INTEGER DEFAULT 0,
  playing INTEGER DEFAULT 1,
+ paddles VARCHAR(9),
  UNIQUE (game_id, user_name)
 )
 ''')
