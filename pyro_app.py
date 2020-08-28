@@ -356,7 +356,7 @@ def application(e, start_response):
 
         page += '<h2>Table "player"</h2>\n'
         page += '<p>Connects players with games. One row for every player in a game.</p>\n'
-        page += '<table><tr><th>rowid</th><th>game_id</th><th>user_name</th><th></th><th>playing</th><th>paddles</th></tr>\n'
+        page += '<table><tr><th>rowid</th><th>game_id</th><th>user_name</th><th>score</th><th>playing</th><th>paddles</th></tr>\n'
         for rowid, game_id, user_name, score, playing, paddles in players:
             page += '<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>\n'.format(
                 rowid, game_id, user_name, score, playing, paddles
