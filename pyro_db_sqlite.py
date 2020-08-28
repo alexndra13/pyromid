@@ -17,6 +17,7 @@ class DB:
     def __init__(self):
         self.connection = sqlite3.connect('pyro_game.db')
 
+    # Check the username and password entered to be sure that they match what is in the database.
     def user_pass_valid(self, username, password):
         cursor = self.connection.cursor()
         cursor.execute('SELECT name FROM user WHERE name = ? AND password = ?', [username, password])
@@ -25,21 +26,26 @@ class DB:
         else:
             return False
 
+    # Adds a new username to the database.
     def add_username(self, username, password):
         cursor = self.connection.cursor()
+        # First check to see if the username is already used.
         cursor.execute('SELECT name FROM user WHERE name = ?', [username])
         if cursor.fetchone():
             return False
         else:
+            # Insert the username and password into the database
             cursor.execute('INSERT INTO user (name, password) VALUES (?, ?)', [username, password])
             self.connection.commit()
             return True
 
+    # For a given game_id, return all the fields in the game database
     def get_game_by_id(self, game_id):
         cursor = self.connection.cursor()
         cursor.execute('SELECT players, goal, state, ts, turns FROM game WHERE rowid = ?', [game_id])
         return cursor.fetchone()
 
+    # For a given username, return both game and player fields for the active (playing = 1) game
     def get_games_by_user(self, username):
         cursor = self.connection.cursor()
         cursor.execute(
@@ -50,8 +56,10 @@ class DB:
         )
         return cursor.fetchall()
 
+    # ???
     def get_registering_games_by_user(self, username):
         cursor = self.connection.cursor()
+        # state = 0 means game is still adding players
         cursor.execute(
             'SELECT game_id, players, goal, ts, turns FROM game, ('
             ' SELECT rowid game_id FROM game WHERE state = 0 AND rowid NOT IN ('
@@ -64,25 +72,33 @@ class DB:
         )
         return cursor.fetchall()
 
+    # Creates a new game row, and a new player row linked to that game in the player table.
     def new_game(self, players, goal, username):
         cursor = self.connection.cursor()
         cursor.execute('INSERT INTO game (players, goal) VALUES (?, ?);', [players, goal])
+        # last_insert_rowid() is for the game table.
+        # we need to add the paddles field here for the first person to join the game using the "goal" value.
         cursor.execute('INSERT INTO player (game_id, user_name) VALUES (last_insert_rowid(), ?)', [username])
         self.connection.commit()
 
+    # A person joins an already listed game.
     def join_game(self, game_id, username):
         game = self.get_game_by_id(game_id)
         if not game:
             print("Unknown game")
             return
 
+        # extract key value pairs from the game object
         max_players, goal, state, ts, turns = game
+        # should this read "if state > 0" ??
         if state > 1:
             print("Game full")
             return
 
         cursor = self.connection.cursor()
+        # make a new row in the player table.  Insert paddles using the "goal" value. paddles="12345"
         cursor.execute('INSERT INTO player (game_id, user_name) VALUES (?, ?)', [game_id, username])
+        # figure out how many people are now in the game (including the one just added)
         cursor.execute('SELECT count(*) FROM player WHERE game_id = ?', [game_id])
         (players_in_game,) = cursor.fetchone()
         if players_in_game == max_players:  # Players filled
@@ -92,8 +108,10 @@ class DB:
             cursor.execute('UPDATE game SET ts = datetime() WHERE rowid = ?', [game_id])
             self.connection.commit()
         elif players_in_game > max_players:  # Too many players
+            # something went wrong and we added more players than are allowed.  Remove the new player.
             self.connection.rollback()
 
+    # ???
     def updated_games(self, username):
         cursor = self.connection.cursor()
         cursor.execute(  # Find latest timestamps of players' game joins, quits, moves where user himself has not quit
@@ -113,6 +131,7 @@ class DB:
         (latest_timestamp_of_registering_games,) = cursor.fetchone()
         return latest_timestamp_of_running_games, latest_timestamp_of_registering_games
 
+    # Player leaves the game.
     def quit_game(self, game_id, username):
         cursor = self.connection.cursor()
         cursor.execute(
@@ -146,6 +165,7 @@ class DB:
             cursor.execute('UPDATE game SET ts = datetime() WHERE rowid = ?', [game_id])
             self.connection.commit()
 
+    # retrieve all the fields from the three tables
     def dump(self):
         cursor = self.connection.cursor()
 
@@ -155,7 +175,7 @@ class DB:
         cursor.execute('SELECT rowid, players, goal, state, ts, turns FROM game')
         games = cursor.fetchall()
 
-        cursor.execute('SELECT rowid, game_id, user_name, score, playing FROM player')
+        cursor.execute('SELECT rowid, game_id, user_name, score, playing, paddles FROM player')
         players = cursor.fetchall()
 
         return users, games, players
@@ -175,7 +195,7 @@ class Game:
         """Initialize game object with state and load players and scores from database."""
         self.id = game_id
         self.num_players = num_players
-        self.goal = goal
+        self.goal = goal    # number of rounds
         self.state = state  # 0={Registering players}, 1={Game on}, 2={Game over}
         self.ts = ts
         self.turns = json.loads(turns)
@@ -193,6 +213,7 @@ class Game:
         """
         return [p['name'] for p in self.players].index(username)
 
+    # scoring for the game.
     def save_score_for_player(self, index):
         """Save player's score.
 

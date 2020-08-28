@@ -8,6 +8,7 @@ from db_sqlite import Game
 
 
 class Pyramid(Game):
+    # valid move logic goes here
     def valid_moves(self, username):
         """Return list of pairs with valid moves for this player and how to display them.
 
@@ -17,6 +18,7 @@ class Pyramid(Game):
         """
         return [('r', 'Rock'), ('p', 'Paper'), ('s', 'Scissors')]
 
+    # a player just played a paddle
     def add_player_move(self, username, move):
         """Add a new move by a player to the game.
 

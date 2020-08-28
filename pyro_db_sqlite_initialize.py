@@ -2,17 +2,18 @@
 #
 # The table are:
 #    user: name, password
+#
 #    game: players, goal, state, ts, turns
 #       One line for each game.
 #       players = max number of players in the game
 #       goal = score (or number of rounds)
 #       state = 0=adding players, 1=game in progress, 2=game over
 #       ts = timestamp of last player added to game
-#       turns =
+#       turns = text representation of the game history (who played what each turn)
 #
 #    player: game_id, user_name, score, playing, paddles
 #       One line for each player in each game.
-#       game_id = unique game number for all players in game
+#       game_id = unique game number for all players in game.  Same as row_id for the game table.
 #       user_name = user name
 #       score = player's score
 #       playing = 0=left game, 1=in game
