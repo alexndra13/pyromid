@@ -40,7 +40,8 @@ CREATE TABLE game (
  goal INTEGER,
  state INTEGER DEFAULT 0,
  ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
- turns VARCHAR(4096) DEFAULT '[]'
+ turns VARCHAR(4096) DEFAULT '[]',
+ gamepaddles varchar(10)
 )
 ''')
 

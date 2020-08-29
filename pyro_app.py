@@ -192,7 +192,10 @@ def application(e, start_response):
             start_response('200 OK', headers)
             return ['No session'.encode()]
 
+        # When submitting a new game, it comes here because "goal" is in the parameters.
         if 'goal' in params:
+            # currently hardcoded for 2 players here
+            # write the game to the database
             db.new_game(2, params['goal'][0], session_user) #use this line to change number of players.
             headers.append(('Location', app_root))
             start_response('303 See Other', headers)
@@ -347,10 +350,10 @@ def application(e, start_response):
 
         page += '<h2>Table "game"</h2>\n'
         page += '<p>One row for every game.</p>\n'
-        page += '<table><tr><th>rowid</th><th>players</th><th>goal</th><th>state</th><th>ts</th><th>turns</th></tr>\n'
-        for rowid, numplayers, goal, state, ts, turns in games:
-            page += '<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>\n'.format(
-                rowid, numplayers, goal, state, ts, turns
+        page += '<table><tr><th>rowid</th><th>players</th><th>goal</th><th>state</th><th>ts</th><th>turns</th><th>gamepaddles</th></tr>\n'
+        for rowid, numplayers, goal, state, ts, turns, gamepaddles in games:
+            page += '<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>\n'.format(
+                rowid, numplayers, goal, state, ts, turns, gamepaddles
             )
         page += '</table>\n'
 

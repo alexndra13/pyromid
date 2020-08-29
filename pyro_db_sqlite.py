@@ -42,7 +42,7 @@ class DB:
     # For a given game_id, return all the fields in the game database
     def get_game_by_id(self, game_id):
         cursor = self.connection.cursor()
-        cursor.execute('SELECT players, goal, state, ts, turns FROM game WHERE rowid = ?', [game_id])
+        cursor.execute('SELECT players, goal, state, ts, turns, gamepaddles FROM game WHERE rowid = ?', [game_id])
         return cursor.fetchone()
 
     # For a given username, return both game and player fields for the active (playing = 1) game
@@ -74,11 +74,23 @@ class DB:
 
     # Creates a new game row, and a new player row linked to that game in the player table.
     def new_game(self, players, goal, username):
+        # Create the gamepaddles text and store in the game table for this game.
+        # The gamepaddles text contains the initial list of paddles that can be played for any player that joins
+        # Example: 5 rounds, then gamepaddles = "12345"
+        # gamepaddles is copied to the paddles field in each row in the player table when a player joins the game.
+        # As a player uses paddles, the text coresponding to the number used is replaced with "_"
+        gamepaddles = ""
+        pad = 1
+
+        while pad <= int(goal):
+            gamepaddles += str(pad)
+            pad += 1
+
         cursor = self.connection.cursor()
-        cursor.execute('INSERT INTO game (players, goal) VALUES (?, ?);', [players, goal])
+        cursor.execute('INSERT INTO game (players, goal, gamepaddles) VALUES (?, ?, ?);', [players, goal, gamepaddles])
         # last_insert_rowid() is for the game table.
         # we need to add the paddles field here for the first person to join the game using the "goal" value.
-        cursor.execute('INSERT INTO player (game_id, user_name) VALUES (last_insert_rowid(), ?)', [username])
+        cursor.execute('INSERT INTO player (game_id, user_name, paddles) VALUES (last_insert_rowid(), ?, ?)', [username, gamepaddles])
         self.connection.commit()
 
     # A person joins an already listed game.
@@ -89,7 +101,7 @@ class DB:
             return
 
         # extract key value pairs from the game object
-        max_players, goal, state, ts, turns = game
+        max_players, goal, state, ts, turns, gamepaddles = game
         # should this read "if state > 0" ??
         if state > 1:
             print("Game full")
@@ -97,7 +109,7 @@ class DB:
 
         cursor = self.connection.cursor()
         # make a new row in the player table.  Insert paddles using the "goal" value. paddles="12345"
-        cursor.execute('INSERT INTO player (game_id, user_name) VALUES (?, ?)', [game_id, username])
+        cursor.execute('INSERT INTO player (game_id, user_name, paddles) VALUES (?, ?, ?)', [game_id, username, gamepaddles])
         # figure out how many people are now in the game (including the one just added)
         cursor.execute('SELECT count(*) FROM player WHERE game_id = ?', [game_id])
         (players_in_game,) = cursor.fetchone()
@@ -172,7 +184,7 @@ class DB:
         cursor.execute('SELECT name, password FROM user')
         users = cursor.fetchall()
 
-        cursor.execute('SELECT rowid, players, goal, state, ts, turns FROM game')
+        cursor.execute('SELECT rowid, players, goal, state, ts, turns, gamepaddles FROM game')
         games = cursor.fetchall()
 
         cursor.execute('SELECT rowid, game_id, user_name, score, playing, paddles FROM player')
