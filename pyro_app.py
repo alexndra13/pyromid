@@ -103,7 +103,7 @@ def application(e, start_response):
         page += '<h2>My games</h2>\n'
         page += '<table><tr><th>Game</th><th>Goal</th><th>Quit</th><th>State</th><th>Players</th></tr>\n'
         games = [
-            Pyramid(i, p, g, st, ts, t, db.connection) for i, p, g, st, ts, t in db.get_games_by_user(session_user)
+            Pyramid(i, p, g, st, ts, t, gp, db.connection) for i, p, g, st, ts, t, gp in db.get_games_by_user(session_user)
             ]
         for game in games:
             page += '<tr><td>{}</td><td>{}</td><td><a href="{}/quit?id={}">quit</a></td>'.format(
@@ -253,10 +253,12 @@ def application(e, start_response):
             start_response('200 OK', headers)
             return ['No session'.encode()]
 
+        # When refreshing the game page, URL like http://localhost:8000/game?id=1
         game_id = params['id'][0]
 
-        (players, goal, state, ts, turns) = db.get_game_by_id(game_id)
-        game = Pyramid(game_id, players, goal, state, ts, turns, db.connection)
+        (players, goal, state, ts, turns, gamepaddles) = db.get_game_by_id(game_id)
+        # Instantiate the game object
+        game = Pyramid(game_id, players, goal, state, ts, turns, gamepaddles, db.connection)
         if game.state == 0:  # Error: cannot view game, it is still registering players
             start_response('200 OK', headers)
             return [(page + 'Still registering players</body></html>').encode()]
@@ -329,7 +331,7 @@ def application(e, start_response):
             return ['No session'.encode()]
 
         start_response('200 OK', headers)
-        p, g, s, ts, t = db.get_game_by_id(params['id'][0])
+        p, g, s, ts, t, gp = db.get_game_by_id(params['id'][0])
         return ['{}'.format(ts).encode()]
 
     # ----- Dump tables ------------------------------------------------

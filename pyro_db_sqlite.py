@@ -49,7 +49,7 @@ class DB:
     def get_games_by_user(self, username):
         cursor = self.connection.cursor()
         cursor.execute(
-            'SELECT game.rowid, players, goal, state, ts, turns '
+            'SELECT game.rowid, players, goal, state, ts, turns, gamepaddles '
             'FROM game, player '
             'WHERE player.game_id = game.rowid AND playing AND user_name = ? '
             'ORDER BY 1', [username]
@@ -203,7 +203,7 @@ class DB:
 
 class Game:
     """Base functionality for game classes."""
-    def __init__(self, game_id, num_players, goal, state, ts, turns, connection):
+    def __init__(self, game_id, num_players, goal, state, ts, turns, gamepaddles, connection):
         """Initialize game object with state and load players and scores from database."""
         self.id = game_id
         self.num_players = num_players
@@ -211,11 +211,14 @@ class Game:
         self.state = state  # 0={Registering players}, 1={Game on}, 2={Game over}
         self.ts = ts
         self.turns = json.loads(turns)
+        self.gamepaddles = gamepaddles
 
         self.connection = connection
         cursor = connection.cursor()
         cursor.execute('SELECT user_name, score, playing, paddles FROM player WHERE game_id = ? ORDER BY rowid', [game_id])
         self.players = [{'name': n, 'score': s, 'playing': p, 'paddles': pa} for n, s, p, pa in cursor.fetchall()]
+
+
 
     def player_index(self, username):
         """Return player's index in player list

@@ -4,7 +4,7 @@ The code below is still the same as for Rock-Paper-Scissors.
 Modify to implement the Pyramid game.
 """
 
-from db_sqlite import Game
+from pyro_db_sqlite import Game
 
 
 class Pyramid(Game):
@@ -12,11 +12,30 @@ class Pyramid(Game):
     def valid_moves(self, username):
         """Return list of pairs with valid moves for this player and how to display them.
 
-        For example [('r', 'Rock'), ('p', 'Paper'), ('s', 'Scissors')]
         :param username: The moves valid for this user
         :return: List of pairs
+
+        self.players contains a list of dictionaries - one dictionary per player.
+        Each dictionary has the player variables for the players in the game.
+
+        Example:
+        [
+        {'name': 'a', 'score': 0, 'playing': 1, 'paddles': '1_3456'},
+        {'name': 'b', 'score': 1, 'playing': 1, 'paddles': '12345_'},
+        {'name': 'c', 'score': 0, 'playing': 1, 'paddles': '123_56'}
+        ]
         """
-        return [('r', 'Rock'), ('p', 'Paper'), ('s', 'Scissors')]
+
+        # First, get the index in the list for the dictionary that coresponds to username
+        # Example:
+        #  If username = 'b', index = 1
+        index = self.player_index(username)
+
+        # Now, retrieve the paddles for username
+        paddles = self.players[index]['paddles']
+
+        # return [('r', 'Rock'), ('p', 'Paper'), ('s', 'Scissors')]
+        return [('p', paddles)]
 
     # a player just played a paddle
     def add_player_move(self, username, move):
