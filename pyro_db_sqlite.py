@@ -214,8 +214,8 @@ class Game:
 
         self.connection = connection
         cursor = connection.cursor()
-        cursor.execute('SELECT user_name, score, playing FROM player WHERE game_id = ? ORDER BY rowid', [game_id])
-        self.players = [{'name': n, 'score': s, 'playing': p} for n, s, p in cursor.fetchall()]
+        cursor.execute('SELECT user_name, score, playing, paddles FROM player WHERE game_id = ? ORDER BY rowid', [game_id])
+        self.players = [{'name': n, 'score': s, 'playing': p, 'paddles': pa} for n, s, p, pa in cursor.fetchall()]
 
     def player_index(self, username):
         """Return player's index in player list
