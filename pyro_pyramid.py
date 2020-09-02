@@ -27,11 +27,11 @@ class Pyramid(Game):
         """
 
         # First, get the index in the list for the dictionary that coresponds to username
-        # Example:
-        #  If username = 'b', index = 1
+        # Example: If username = 'b', index = 1
         index = self.player_index(username)
 
         # Now, retrieve the paddles for username
+        # Example: '12345_'
         paddles = self.players[index]['paddles']
 
         # return [('r', 'Rock'), ('p', 'Paper'), ('s', 'Scissors')]
