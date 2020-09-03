@@ -17,7 +17,7 @@
 #       user_name = user name
 #       score = player's score
 #       playing = 0=left game, 1=in game
-#       paddles = text representation of which paddles are left to play (e.g. "12_4_67")
+#       paddles = text representation of which paddles are left to play (e.g. "12467" if 3 and 5 have been played)
 #
 import sqlite3
 

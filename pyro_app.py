@@ -277,7 +277,7 @@ def application(e, start_response):
             page += '<p>Your move: '
             move_template = '<a href="{}/game?id={}&amp;move={}">{}</a>'
             move_links = [
-                move_template.format(app_root, game.id, mval, mname) for mval, mname in game.valid_moves(session_user)
+                move_template.format(app_root, game.id, mval, mval) for mval in game.valid_moves(session_user)
                 ]
             page += ' | '.join(move_links)
         else:

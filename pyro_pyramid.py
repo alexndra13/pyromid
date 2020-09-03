@@ -20,9 +20,9 @@ class Pyramid(Game):
 
         Example:
         [
-        {'name': 'a', 'score': 0, 'playing': 1, 'paddles': '1_3456'},
-        {'name': 'b', 'score': 1, 'playing': 1, 'paddles': '12345_'},
-        {'name': 'c', 'score': 0, 'playing': 1, 'paddles': '123_56'}
+        {'name': 'a', 'score': 0, 'playing': 1, 'paddles': '13456'},
+        {'name': 'b', 'score': 1, 'playing': 1, 'paddles': '12345'},
+        {'name': 'c', 'score': 0, 'playing': 1, 'paddles': '12356'}
         ]
         """
 
@@ -31,11 +31,14 @@ class Pyramid(Game):
         index = self.player_index(username)
 
         # Now, retrieve the paddles for username
-        # Example: '12345_'
+        # Example: '12345'
         paddles = self.players[index]['paddles']
 
-        # return [('r', 'Rock'), ('p', 'Paper'), ('s', 'Scissors')]
-        return [('p', paddles)]
+        # Explode the paddles string into a list of individual characters
+        # Example: [1, 2, 3, 4, 5]
+        mval = list(paddles)
+
+        return mval
 
     # a player just played a paddle
     def add_player_move(self, username, move):
