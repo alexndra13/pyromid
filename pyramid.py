@@ -44,12 +44,12 @@ class Pyramid(Game):
             last_turn[index] = move
             # Check if turn is complete and if so calculate scores
             if not [None for m in last_turn if m is None]:
-                if last_turn in (player[0]['']<player[1]['']):
+                if last_turn in (['p', 'r'], ['s', 'p'], ['r', 's']):
                     self.players[0]['score'] += 1
                     self.save_score_for_player(0)
                     if self.players[0]['score'] == self.goal:
                         self.set_game_over()
-                elif last_turn in (player[0]['']>player[1]['']):
+                elif last_turn in (['r', 'p'], ['p', 's'], ['s', 'r']):
                     self.players[1]['score'] += 1
                     self.save_score_for_player(1)
                     if self.players[1]['score'] == self.goal:
@@ -58,6 +58,7 @@ class Pyramid(Game):
 
     def decorated_moves(self, username):
         """Return a list of moves with formatting information.
+
         :param username: Player's username
         :return: Formatted list of moves
         """

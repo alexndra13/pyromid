@@ -1,5 +1,5 @@
 """Main web application.
-
+Clean
 Uses classes DB and Pyramid to build a pyramid game.
 """
 
@@ -39,7 +39,7 @@ def application(e, start_response):
 </style>
 </head>
 <body>
-<h1>Piramid</h1>'''
+<h1>Rock-Paper-Scissors</h1>'''
 
     # ----- For logging in and registering ---------------------------
 
@@ -99,7 +99,7 @@ def application(e, start_response):
             return [page.encode()]
 
         page += '{} | <a href="{}/logout">Logout</a>'.format(session_user, app_root)
-        page += ' | <a href="{}">Refresh</a>'.format(app_root)
+#       page += ' | <a href="{}">Refresh</a>'.format(app_root)
         page += '<h2>My games</h2>\n'
         page += '<table><tr><th>Game</th><th>Goal</th><th>Quit</th><th>State</th><th>Players</th></tr>\n'
         games = [
@@ -133,7 +133,7 @@ def application(e, start_response):
                 page += '<td>' + players_scores + '</td>'
             page += '</tr>\n'
         page += '</table>'
-        page += '<p><a href="{}/newgame">Start a New 3 Player Game</a></p>'.format(app_root)
+        page += '<p><a href="{}/newgame">Start a New Game</a></p>'.format(app_root)
         ts1 = max(game.ts for game in games) if games else None
 
         page += '<h2>Games accepting players</h2>\n'
@@ -193,21 +193,21 @@ def application(e, start_response):
             return ['No session'.encode()]
 
         if 'goal' in params:
-            db.new_game(2, params['goal'][0], session_user) #use this line to change number of players.
+            db.new_game(2, params['goal'][0], session_user)
             headers.append(('Location', app_root))
             start_response('303 See Other', headers)
             return []
 
         page += '''
-<h2>Create New 3 player Game</h2>
+<h2>Create New Game</h2>
 <form>
-    <h3>Play until round:</h3>
-    <input type="radio" name="goal" value="4">4<br>
+    <h3>Play until score:</h3>
+    <input type="radio" name="goal" value="1">1<br>
+    <input type="radio" name="goal" value="3">3<br>
     <input type="radio" name="goal" value="5">5<br>
-    <input type="radio" name="goal" value="6">6<br>
-    <input type="radio" name="goal" value="7" checked>7<br>
-    <input type="radio" name="goal" value="8">8<br>
-    <input type="radio" name="goal" value="9">9<br>
+    <input type="radio" name="goal" value="10" checked>10<br>
+    <input type="radio" name="goal" value="20">20<br>
+    <input type="radio" name="goal" value="100">100<br>
     <input type="submit" value="Create">
 </form>
 </body></html>'''
@@ -260,10 +260,9 @@ def application(e, start_response):
 
         if 'move' in params:  # Player came here by making a move
             game.add_player_move(session_user, params['move'][0])
-            moves_left.append(move)
 
         page += '<a href="{}">Home</a>'.format(app_root)
-        page += ' | <a href="{}/game?id={}">Refresh</a>'.format(app_root, game_id)
+#       page += ' | <a href="{}/game?id={}">Refresh</a>'.format(app_root, game_id)
         page += '<h3>Game {} -- Play to {}</h3>'.format(game.id, game.goal)
 
         if game.state == 2:
@@ -356,10 +355,10 @@ def application(e, start_response):
 
         page += '<h2>Table "player"</h2>\n'
         page += '<p>Connects players with games. One row for every player in a game.</p>\n'
-        page += '<table><tr><th>rowid</th><th>game_id</th><th>user_name</th><th></th><th>playing</th><th>paddles</th></tr>\n'
-        for rowid, game_id, user_name, score, playing, paddles in players:
-            page += '<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>\n'.format(
-                rowid, game_id, user_name, score, playing, paddles
+        page += '<table><tr><th>rowid</th><th>game_id</th><th>user_name</th><th>score</th><th>playing</th></tr>\n'
+        for rowid, game_id, user_name, score, playing in players:
+            page += '<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>\n'.format(
+                rowid, game_id, user_name, score, playing
             )
         page += '</table>\n'
 

@@ -265,7 +265,7 @@ def application(e, start_response):
 
         if 'move' in params:  # Player came here by making a move
             game.add_player_move(session_user, params['move'][0])
-            moves_left.append(move)
+            # moves_left.append(move)
 
         page += '<a href="{}">Home</a>'.format(app_root)
         page += ' | <a href="{}/game?id={}">Refresh</a>'.format(app_root, game_id)

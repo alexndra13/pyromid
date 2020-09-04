@@ -45,10 +45,10 @@ class Pyramid(Game):
         """Add a new move by a player to the game.
 
         :param username: Username of player who moves
-        :param move: One of the strings 'r', 'p', 's'
+        :param move: The value of the paddle that was played
         """
-        # Discard move if Game not in play (i.e. state != 1), or the move is not r(ock), p(aper) or s(cissors)
-        if self.state != 1 or move not in ('r', 'p', 's'):
+        # Discard move if Game not in play (i.e. state != 1)
+        if self.state != 1:
             return
 
         # Find the index (position) of this player in the list of players in the game.
@@ -68,6 +68,17 @@ class Pyramid(Game):
             last_turn[index] = move
             # Check if turn is complete and if so calculate scores
             if not [None for m in last_turn if m is None]:
+                # Find the player (index) of the highest paddle played (max value)
+                maxindex = last_turn.index(max(last_turn))
+                # Increment the score of the player who won the round
+                self.players[maxindex]['score'] += 1
+                self.save_score_for_player(maxindex)
+                # Check to see if the number of turns is greater than the goal (rounds in the game)
+                if len(self.turns) == self.goal:
+                    self.set_game_over()
+
+            """
+            if not [None for m in last_turn if m is None]:
                 if last_turn in (player[0]['']<player[1]['']):
                     self.players[0]['score'] += 1
                     self.save_score_for_player(0)
@@ -78,13 +89,14 @@ class Pyramid(Game):
                     self.save_score_for_player(1)
                     if self.players[1]['score'] == self.goal:
                         self.set_game_over()
+            """
             self.save_game_state()
 
     def decorated_moves(self, username):
         """Return a list of moves with formatting information.
         :param username: Player's username
         :return: Formatted list of moves
-        """
+
         if not self.turns:
             return []
 
@@ -120,6 +132,8 @@ class Pyramid(Game):
             decorated_turns.append(decorated_last_turn)
 
         return decorated_turns
+        """
+        return []
 
     def is_players_turn(self, username):
         """Check if it is player's turn.
