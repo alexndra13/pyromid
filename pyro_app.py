@@ -139,8 +139,8 @@ def application(e, start_response):
         page += '<h2>Games accepting players</h2>\n'
         page += '<table><tr><th>Game</th><th>Goal</th><th>Join</th><th>State</th><th>Players</th></tr>\n'
         games = [
-            Pyramid(i, p, g, 0, ts, t, db.connection)
-            for i, p, g, ts, t in db.get_registering_games_by_user(session_user)
+            Pyramid(i, p, g, 0, ts, t, gp, db.connection)
+            for i, p, g, ts, t, gp in db.get_registering_games_by_user(session_user)
             ]
         for game in games:
             page += '<tr><td>{}</td><td>{}</td><td><a href="{}/join?id={}">join</a></td>'.format(

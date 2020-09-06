@@ -68,11 +68,42 @@ class Pyramid(Game):
             last_turn[index] = move
             # Check if turn is complete and if so calculate scores
             if not [None for m in last_turn if m is None]:
+                # First, find the max value in the list
+                maxpaddle = max(last_turn)
+                # Next, find the players that played the value of maxpaddle
+                # The index of the winning players will be added to the winners list
+                start_at = -1
+                winners = []
+                while True:
+                    try:
+                        player_index = last_turn.index(maxpaddle, start_at+1)
+                    except ValueError:
+                        break
+                    else:
+                        winners.append(player_index)
+                        start_at = player_index
+
+                # Only one winner?  If so, they get 2 points
+                if len(winners) == 1:
+                    self.players[winners[0]]['score'] +=2
+                    self.save_score_for_player(winners[0])
+
+                # If more than one winner, each gets 1 point
+                i = 0
+                if len(winners) > 1:
+                    while i < len(winners):
+                        self.players[winners[i]]['score'] +=1
+                        self.save_score_for_player(winners[i])
+                        i += 1
+
+
+
                 # Find the player (index) of the highest paddle played (max value)
-                maxindex = last_turn.index(max(last_turn))
+                #maxindex = last_turn.index(max(last_turn))
                 # Increment the score of the player who won the round
-                self.players[maxindex]['score'] += 1
-                self.save_score_for_player(maxindex)
+                #self.players[maxindex]['score'] += 1
+                #self.save_score_for_player(maxindex)
+
                 # Check to see if the number of turns is greater than the goal (rounds in the game)
                 if len(self.turns) == self.goal:
                     self.set_game_over()

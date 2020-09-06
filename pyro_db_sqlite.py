@@ -61,7 +61,7 @@ class DB:
         cursor = self.connection.cursor()
         # state = 0 means game is still adding players
         cursor.execute(
-            'SELECT game_id, players, goal, ts, turns FROM game, ('
+            'SELECT game_id, players, goal, ts, turns, gamepaddles FROM game, ('
             ' SELECT rowid game_id FROM game WHERE state = 0 AND rowid NOT IN ('
             '  SELECT game.rowid FROM game, player'
             '  WHERE state = 0 AND game.rowid = player.game_id AND player.user_name = ?'
