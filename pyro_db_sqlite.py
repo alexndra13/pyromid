@@ -241,6 +241,17 @@ class Game:
             'WHERE user_name = ? AND game_id = ?', [player['score'], player['name'], self.id])
         # Commit in save_game_state()
 
+    def update_player_paddles(self, index, new_paddles):
+        """ Update the value of the players paddles to remove a paddle played
+
+        :param index: Position of player in Game's player list
+        """
+        player = self.players[index]
+        cursor = self.connection.cursor()
+        cursor.execute(
+            'UPDATE player SET paddles = ? '
+            'WHERE user_name = ? AND game_id = ?', [new_paddles, player['name'], self.id])
+
     def set_game_over(self):
         """Set game status to game over."""
         self.state = 2  # Game over

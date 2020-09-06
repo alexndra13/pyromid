@@ -269,7 +269,7 @@ def application(e, start_response):
 
         page += '<a href="{}">Home</a>'.format(app_root)
         page += ' | <a href="{}/game?id={}">Refresh</a>'.format(app_root, game_id)
-        page += '<h3>Game {} -- Play to {}</h3>'.format(game.id, game.goal)
+        page += '<h3>Game {} -- Playing {} rounds</h3>'.format(game.id, game.goal)
 
         if game.state == 2:
             page += '<p>Game over</p>'
@@ -306,7 +306,7 @@ def application(e, start_response):
             page += '''
 <script>
     function callback(event) {{
-        if (event.target.readyState == 4 && event.target.responseText != '{}') {{
+        if (event.target.readyState == 4 && event.target.responseText) {{
             window.location = '{}/game?id={}'
         }}
     }}
@@ -318,7 +318,7 @@ def application(e, start_response):
         xmlhttp.send()
     }}
     setInterval(timeFunc, 1000)
-</script>'''.format(game.ts, app_root, game.id, app_root, game.id)
+</script>'''.format( app_root, game.id, app_root, game.id)
 
         start_response('200 OK', headers)
         return [(page + '</body></html>').encode()]

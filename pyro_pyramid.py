@@ -55,6 +55,13 @@ class Pyramid(Game):
         # In the case of RPS games this value will be 0 or 1 since RPS always has 2 players.
         index = self.player_index(username)
 
+        # Update the paddles for this player to remove the paddle just played.
+        old_paddles = self.players[index]['paddles']
+        new_paddles = old_paddles.replace(move, '')
+        # Now update the player table
+        self.update_player_paddles(index, new_paddles)
+
+
         # If there are no game rounds yet, or the last one is complete
         if not self.turns or not [None for m in self.turns[-1] if m is None]:  # No turns or last complete
             new_turn = [None] * len(self.players)
@@ -70,10 +77,12 @@ class Pyramid(Game):
             if not [None for m in last_turn if m is None]:
                 # First, find the max value in the list
                 maxpaddle = max(last_turn)
+
                 # Next, find the players that played the value of maxpaddle
                 # The index of the winning players will be added to the winners list
                 start_at = -1
                 winners = []
+
                 while True:
                     try:
                         player_index = last_turn.index(maxpaddle, start_at+1)
@@ -96,31 +105,10 @@ class Pyramid(Game):
                         self.save_score_for_player(winners[i])
                         i += 1
 
-
-
-                # Find the player (index) of the highest paddle played (max value)
-                #maxindex = last_turn.index(max(last_turn))
-                # Increment the score of the player who won the round
-                #self.players[maxindex]['score'] += 1
-                #self.save_score_for_player(maxindex)
-
                 # Check to see if the number of turns is greater than the goal (rounds in the game)
                 if len(self.turns) == self.goal:
                     self.set_game_over()
 
-            """
-            if not [None for m in last_turn if m is None]:
-                if last_turn in (player[0]['']<player[1]['']):
-                    self.players[0]['score'] += 1
-                    self.save_score_for_player(0)
-                    if self.players[0]['score'] == self.goal:
-                        self.set_game_over()
-                elif last_turn in (player[0]['']>player[1]['']):
-                    self.players[1]['score'] += 1
-                    self.save_score_for_player(1)
-                    if self.players[1]['score'] == self.goal:
-                        self.set_game_over()
-            """
             self.save_game_state()
 
     def decorated_moves(self, username):
