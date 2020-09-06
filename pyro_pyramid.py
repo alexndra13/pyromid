@@ -127,6 +127,7 @@ class Pyramid(Game):
         """Return a list of moves with formatting information.
         :param username: Player's username
         :return: Formatted list of moves
+        """
 
         if not self.turns:
             return []
@@ -139,9 +140,28 @@ class Pyramid(Game):
             incomplete_last_turn = None
             complete_turns = self.turns
 
-        translate = {'r': 'Rock', 'p': 'Paper', 's': 'Scissors'}
+        #translate = {'r': 'Rock', 'p': 'Paper', 's': 'Scissors'}
         decorated_turns = []
 
+        for turn in complete_turns:
+            # decorated_turns is a list of tuples.  It looks like this:
+            # [(player1_score, highlight?), (player2_score, highlight?), ...]
+            # player_score is what is printed in the box
+            # if highlight is true, then turn the box green
+            deco_list = []
+            # Find the value of the max paddle this turn
+            maxpaddle = max(turn)
+
+            for player_paddle_value in turn:
+                if player_paddle_value == maxpaddle:
+                    highlight = True
+                else:
+                    highlight = False
+                deco_list.append((player_paddle_value, highlight))
+
+            decorated_turns.append(deco_list)
+
+        '''
         for turn in complete_turns:
             if turn in (['p', 'r'], ['s', 'p'], ['r', 's']):
                 decorated_turns.append([(translate[turn[0]], True), (translate[turn[1]], False)])
@@ -149,6 +169,7 @@ class Pyramid(Game):
                 decorated_turns.append([(translate[turn[0]], False), (translate[turn[1]], True)])
             else:
                 decorated_turns.append([(translate[turn[0]], False), (translate[turn[1]], False)])
+        '''
 
         if incomplete_last_turn:
             index = self.player_index(username)
@@ -157,14 +178,13 @@ class Pyramid(Game):
                 if m is None:
                     decorated_last_turn.append(('', False))
                 elif i == index or incomplete_last_turn[index]:
-                    decorated_last_turn.append((translate[m], False))
+                    decorated_last_turn.append((m, False))
                 else:
                     decorated_last_turn.append(('?', False))
             decorated_turns.append(decorated_last_turn)
 
         return decorated_turns
-        """
-        return []
+
 
     def is_players_turn(self, username):
         """Check if it is player's turn.
