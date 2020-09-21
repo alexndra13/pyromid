@@ -133,7 +133,7 @@ def application(e, start_response):
                 page += '<td>' + players_scores + '</td>'
             page += '</tr>\n'
         page += '</table>'
-        page += '<p><a href="{}/newgame">Start a New 3 Player Game</a></p>'.format(app_root)
+        page += '<p><a href="{}/newgame">Start a New Game</a></p>'.format(app_root)
         ts1 = max(game.ts for game in games) if games else None
 
         page += '<h2>Games accepting players</h2>\n'
@@ -194,16 +194,20 @@ def application(e, start_response):
 
         # When submitting a new game, it comes here because "goal" is in the parameters.
         if 'goal' in params:
-            # currently hardcoded for 2 players here
+            # numplayers is the parameter that holds the number of players the game creator specified.
             # write the game to the database
-            db.new_game(2, params['goal'][0], session_user) #use this line to change number of players.
+            db.new_game(params['numplayers'][0], params['goal'][0], session_user) # numplayers has the number of players.
             headers.append(('Location', app_root))
             start_response('303 See Other', headers)
             return []
 
+        # Ask for the number of players and the number of rounds.
+        # Use a type "number" for the number of players to ensure a number is entered and is at least 2 players.
         page += '''
-<h2>Create New 3 player Game</h2>
+<h2>Create a New Game</h2>
 <form>
+    <h3>How many players?</h3>
+    <input type="number" name="numplayers" min="2">
     <h3>Play until round:</h3>
     <input type="radio" name="goal" value="4">4<br>
     <input type="radio" name="goal" value="5">5<br>
@@ -211,6 +215,7 @@ def application(e, start_response):
     <input type="radio" name="goal" value="7" checked>7<br>
     <input type="radio" name="goal" value="8">8<br>
     <input type="radio" name="goal" value="9">9<br>
+    <br>
     <input type="submit" value="Create">
 </form>
 </body></html>'''
